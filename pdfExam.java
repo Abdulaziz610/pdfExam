@@ -1,10 +1,14 @@
 package javaExam;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Scanner;
+
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
  
 public class pdfExam {
@@ -15,7 +19,7 @@ public class pdfExam {
     try {
     	for(int i = 0; i <= 100; i++) {
     		Document document = new Document();
-    		OutputStream outputStream = new FileOutputStream(new File(" TestFile " + i + " .pdf"));
+    		OutputStream outputStream = new FileOutputStream(new File("C:\\Users\\Lenovo\\eclipse-workspace\\javaExam\\src\\javaExam\\TestFile " + i + " .pdf"));
     		PdfWriter.getInstance(document, outputStream);
     		document.open();
     		if(i <= 15) {
@@ -46,6 +50,48 @@ public class pdfExam {
     	catch (Exception e) {
     	e.printStackTrace();
     }
+    
+    Scanner sc = new Scanner(System.in);
+    File filePath = new File("C:\\Users\\Lenovo\\eclipse-workspace\\javaExam\\src\\javaExam\\TestFileOutput");
+    File fileList[] = filePath.listFiles();
+    System.out.println(" Enter a word to be searched ");
+    String sWord = sc.next();
+    
+    	for(File outFile: fileList) {
+    		try {
+    			PdfReader fileReader = new PdfReader(outFile.getPath());
+    		}
+    		
+    	 	catch (Exception e) {
+    	    	e.printStackTrace();
+    	    }
+    	    
+    		
+    	}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
   }
 }
