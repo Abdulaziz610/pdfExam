@@ -6,15 +6,24 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfCopy;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
  
 public class pdfExam {
+	
+	public static void merge(File source, File dest) throws IOException {
+
+		// copy file in folder
+		Files.copy(source.toPath(), dest.toPath());
+	}
 	
   public static void main(String args[]) throws IOException {
 	  
@@ -22,7 +31,7 @@ public class pdfExam {
     try {
     	for(int i = 0; i <= 100; i++) {
     		Document document = new Document();
-    		OutputStream outputStream = new FileOutputStream(new File("C:\\Users\\Lenovo\\eclipse-workspace\\javaExam\\src\\javaExam\\TestFiles\\TestFile " + i + " .pdf"));
+    		OutputStream outputStream = new FileOutputStream(new File("C:\\Users\\Lenovo\\eclipse-workspace\\javaExam\\src\\javaExam\\TestFiles\\TestFile" + i + ".pdf"));
     		PdfWriter.getInstance(document, outputStream);
     		document.open();
     		if(i <= 15) {
@@ -53,55 +62,42 @@ public class pdfExam {
     	catch (Exception e) {
     	e.printStackTrace();
     }
-    Scanner sc = new Scanner(System.in);
-    String directory = "C:\\Users\\Lenovo\\eclipse-workspace\\javaExam\\src\\javaExam\\TestFiles";
-    System.out.println(" Enter a word to be searched? ");
-    	String searchWord = sc.next();
-    	File dir = new File(directory);          
-    	File[] pdfFiles = dir.listFiles((d, name) -> name.endsWith(".pdf"));
+  //copy method
 
-    	for (File pdfFile : pdfFiles) {
-    		try {
-    			PdfReader reader = new PdfReader(pdfFile.getAbsolutePath());
-    			int numPages = reader.getNumberOfPages();
-    			boolean found = false;
-    			for (int i = 1; i <= numPages; i++) {
-    				String pageText = PdfTextExtractor.getTextFromPage(reader, i);
-    				if (pageText.toLowerCase().contains(searchWord.toLowerCase())) {
-    					found = true;
-    					//System.out.println(searchWord);
-    		
-    					break;
-    			}
-    		}
- 
-    			if (found) {
-    				System.out.println("Found " + searchWord + " in " + pdfFile.getName());
-    			}
-    		}
-    		catch (Exception e) {
-    			e.printStackTrace();
-    		}
-   
-    
-    	
+    Scanner sc = new Scanner(System.in);
+    try {
+    List<String> matchWords = new ArrayList<>();
+    System.out.println("Enter a word to be searched?");
+    String searchWord = sc.next();
+    for (int counter = 0; counter <= 100; counter++) {
+    PdfReader readFile = new PdfReader("C:\\Users\\Lenovo\\eclipse-workspace\\javaExam\\src\\javaExam\\TestFiles\\TestFile" + counter + ".pdf");
+    String text = PdfTextExtractor.getTextFromPage(readFile, 1);
+
+    if (text.contains(searchWord)) {
+    	matchWords.add("C:\\Users\\Lenovo\\eclipse-workspace\\javaExam\\src\\javaExam\\TestFiles\\TestFile" + counter + ".pdf");
+    }
+    	readFile.close();
+    }
+
+    for (String matchFiles : matchWords) {
+    	String fileName = matchFiles.substring(matchFiles.lastIndexOf("\\") + 1);
+    	Document document = new Document();
+    	OutputStream outputStream = new FileOutputStream(new File("C:\\Users\\Lenovo\\eclipse-workspace\\javaExam\\src\\javaExam\\CopyFiles\\" + fileName));
+    	PdfCopy copy = new PdfCopy(document, outputStream);
+    	document.open();
+    	PdfReader reader = new PdfReader(matchFiles);
+    	copy.addDocument(reader);
+    	reader.close();
+    	document.close();
+    	outputStream.close();
+    	System.out.println("File(pdf) " + fileName + " has been copied");
     	}
-    	
-    	
-    	
-    	
-  
-    	File file = new File("C:\\\\Users\\\\Lenovo\\\\eclipse-workspace\\\\javaExam\\\\src\\\\javaExam\\\\TestFiles");
-    	File dir1 = new File("C:\\Users\\Lenovo\\eclipse-workspace\\javaExam\\src\\javaExam\\CopyFiles"); 
-    	try { 
-    		
-    		Files.copy(file.toPath(), dir1.toPath());
-    	}
-    	
-    	catch (Exception e) {
-			e.printStackTrace();
-    	}
-    
+
+    } catch (Exception e) {
+
+    e.printStackTrace();
+
+    }
     	
   }
 }
