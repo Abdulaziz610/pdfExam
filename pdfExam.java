@@ -4,12 +4,15 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Scanner;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.parser.PdfTextExtractor;
  
 public class pdfExam {
 	
@@ -19,7 +22,7 @@ public class pdfExam {
     try {
     	for(int i = 0; i <= 100; i++) {
     		Document document = new Document();
-    		OutputStream outputStream = new FileOutputStream(new File("C:\\Users\\Lenovo\\eclipse-workspace\\javaExam\\src\\javaExam\\TestFile " + i + " .pdf"));
+    		OutputStream outputStream = new FileOutputStream(new File("C:\\Users\\Lenovo\\eclipse-workspace\\javaExam\\src\\javaExam\\TestFiles\\TestFile " + i + " .pdf"));
     		PdfWriter.getInstance(document, outputStream);
     		document.open();
     		if(i <= 15) {
@@ -50,48 +53,55 @@ public class pdfExam {
     	catch (Exception e) {
     	e.printStackTrace();
     }
-    
     Scanner sc = new Scanner(System.in);
-    File filePath = new File("C:\\Users\\Lenovo\\eclipse-workspace\\javaExam\\src\\javaExam\\TestFileOutput");
-    File fileList[] = filePath.listFiles();
-    System.out.println(" Enter a word to be searched ");
-    String sWord = sc.next();
-    
-    	for(File outFile: fileList) {
+    String directory = "C:\\Users\\Lenovo\\eclipse-workspace\\javaExam\\src\\javaExam\\TestFiles";
+    System.out.println(" Enter a word to be searched? ");
+    	String searchWord = sc.next();
+    	File dir = new File(directory);          
+    	File[] pdfFiles = dir.listFiles((d, name) -> name.endsWith(".pdf"));
+
+    	for (File pdfFile : pdfFiles) {
     		try {
-    			PdfReader fileReader = new PdfReader(outFile.getPath());
+    			PdfReader reader = new PdfReader(pdfFile.getAbsolutePath());
+    			int numPages = reader.getNumberOfPages();
+    			boolean found = false;
+    			for (int i = 1; i <= numPages; i++) {
+    				String pageText = PdfTextExtractor.getTextFromPage(reader, i);
+    				if (pageText.toLowerCase().contains(searchWord.toLowerCase())) {
+    					found = true;
+    					//System.out.println(searchWord);
+    		
+    					break;
+    			}
     		}
+ 
+    			if (found) {
+    				System.out.println("Found " + searchWord + " in " + pdfFile.getName());
+    			}
+    		}
+    		catch (Exception e) {
+    			e.printStackTrace();
+    		}
+   
+    
+    	
+    	}
+    	
+    	
+    	
+    	
+  
+    	File file = new File("C:\\\\Users\\\\Lenovo\\\\eclipse-workspace\\\\javaExam\\\\src\\\\javaExam\\\\TestFiles");
+    	File dir1 = new File("C:\\Users\\Lenovo\\eclipse-workspace\\javaExam\\src\\javaExam\\CopyFiles"); 
+    	try { 
     		
-    	 	catch (Exception e) {
-    	    	e.printStackTrace();
-    	    }
-    	    
-    		
+    		Files.copy(file.toPath(), dir1.toPath());
+    	}
+    	
+    	catch (Exception e) {
+			e.printStackTrace();
     	}
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    	
   }
 }
